@@ -41,6 +41,16 @@ $config['db_persistent'] = false;
 // you can define specific table (and sequence) names prefix
 $config['db_prefix'] = '';
 
+// Mapping of table names and connections to use for ALL operations.
+// This can be used in a setup with replicated databases and a DB master
+// where read/write access to cache tables should not go to master.
+$config['db_table_dsn'] = array(
+//    'cache' => 'r',
+//    'cache_index' => 'r',
+//    'cache_thread' => 'r',
+//    'cache_messages' => 'r',
+);
+
 
 // ----------------------------------
 // LOGGING/DEBUGGING
@@ -241,6 +251,10 @@ $config['enable_installer'] = false;
 
 // don't allow these settings to be overriden by the user
 $config['dont_override'] = array();
+
+// define which settings should be listed under the 'advanced' block
+// which is hidden by default
+$config['advanced_prefs'] = array();
 
 // provide an URL where a user can get support for this Roundcube installation
 // PLEASE DO NOT LINK TO THE ROUNDCUBE.NET WEBSITE HERE!
@@ -556,15 +570,20 @@ $config['enable_spellcheck'] = true;
 // Setting it to 'shared' will make the dictionary shared by all users.
 $config['spellcheck_dictionary'] = false;
 
-// Set the spell checking engine. 'googie' is the default.
-// 'pspell' and 'enchant' are also available, but they require
-// PHP Pspell or Enchant extensions. When using Nox Spell Server, also set 'googie' here.
+// Set the spell checking engine. Possible values:
+// - 'googie'  - the default
+// - 'pspell'  - requires the PHP Pspell module and aspell installed
+// - 'enchant' - requires the PHP Enchant module
+// - 'atd'     - install your own After the Deadline server or check with the people at http://www.afterthedeadline.com before using their API
+// Since Google shut down their public spell checking service, you need to 
+// connect to a Nox Spell Server when using 'googie' here. Therefore specify the 'spellcheck_uri'
 $config['spellcheck_engine'] = 'googie';
 
-// For a locally installed Nox Spell Server, please specify the URI to call it.
-// Get Nox Spell Server from http://orangoo.com/labs/?page_id=72
-// Leave empty to use the Google spell checking service, what means
-// that the message content will be sent to Google in order to check spelling
+// For locally installed Nox Spell Server or After the Deadline services,
+// please specify the URI to call it.
+// Get Nox Spell Server from http://orangoo.com/labs/?page_id=72 or
+// the After the Deadline package from http://www.afterthedeadline.com.
+// Leave empty to use the public API of service.afterthedeadline.com
 $config['spellcheck_uri'] = '';
 
 // These languages can be selected for spell checking.
@@ -599,6 +618,12 @@ $config['upload_progress'] = false;
 // after object delete action. Currently used with supporting address book sources.
 // Setting it to 0, disables the feature.
 $config['undo_timeout'] = 0;
+
+// A static list of canned responses which are immutable for the user
+$config['compose_responses_static'] = array(
+//  array('name' => 'Canned Response 1', 'text' => 'Static Response One'),
+//  array('name' => 'Canned Response 2', 'text' => 'Static Response Two'),
+);
 
 // ----------------------------------
 // ADDRESSBOOK SETTINGS
@@ -666,6 +691,8 @@ $config['ldap_public']['Verisign'] = array(
   // DN and password to bind as before searching for bind DN, if anonymous search is not allowed
   'search_bind_dn' => '',
   'search_bind_pw' => '',
+  // Optional map of replacement strings => attributes used when binding for an individual address book
+  'search_bind_attrib' => array(),  // e.g. array('%udc' => 'ou')
   // Default for %dn variable if search doesn't return DN value
   'search_dn_default' => '',
   // Optional authentication identifier to be used as SASL authorization proxy
@@ -747,14 +774,19 @@ $config['ldap_public']['Verisign'] = array(
   // if the groups base_dn is empty, the contact base_dn is used for the groups as well
   // -> in this case, assure that groups and contacts are separated due to the concernig filters! 
   'groups'  => array(
-    'base_dn'        => '',
-    'scope'          => 'sub',       // Search mode: sub|base|list
-    'filter'         => '(objectClass=groupOfNames)',
-    'object_classes' => array("top", "groupOfNames"),
-    'member_attr'    => 'member',   // Name of the member attribute, e.g. uniqueMember
-    'name_attr'      => 'cn',       // Attribute to be used as group name
-    'member_filter'  => '(objectclass=*)',  // Optional filter to use when querying for group members
-    'vlv'            => false,      // Use VLV controls to list groups
+    'base_dn'           => '',
+    'scope'             => 'sub',       // Search mode: sub|base|list
+    'filter'            => '(objectClass=groupOfNames)',
+    'object_classes'    => array('top', 'groupOfNames'),   // Object classes to be assigned to new groups
+    'member_attr'       => 'member',   // Name of the default member attribute, e.g. uniqueMember
+    'name_attr'         => 'cn',       // Attribute to be used as group name
+    'email_attr'        => 'mail',     // Group email address attribute (e.g. for mailing lists)
+    'member_filter'     => '(objectclass=*)',  // Optional filter to use when querying for group members
+    'vlv'               => false,      // Use VLV controls to list groups
+    'class_member_attr' => array(      // Mapping of group object class to member attribute used in these objects
+      'groupofnames'       => 'member',
+      'groupofuniquenames' => 'uniquemember'
+    ),
   ),
   // this configuration replaces the regular groups listing in the directory tree with
   // a hard-coded list of groups, each listing entries with the configured base DN and filter.
@@ -995,3 +1027,8 @@ $config['default_font_size'] = '10pt';
 
 // Enables display of email address with name instead of a name (and address in title)
 $config['message_show_email'] = false;
+
+// Default behavior of Reply-All button:
+// 0 - Reply-All always
+// 1 - Reply-List if mailing list is detected
+$config['reply_all_mode'] = 0;

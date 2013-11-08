@@ -97,6 +97,7 @@ if (empty($RCMAIL->action) || $RCMAIL->action == 'list') {
   $OUTPUT->set_env('delimiter', $delimiter);
   $OUTPUT->set_env('threading', $threading);
   $OUTPUT->set_env('threads', $threading || $RCMAIL->storage->get_capability('THREAD'));
+  $OUTPUT->set_env('reply_all_mode', (int) $RCMAIL->config->get('reply_all_mode'));
   $OUTPUT->set_env('preview_pane_mark_read', $RCMAIL->config->get('preview_pane_mark_read', 0));
   if ($RCMAIL->storage->get_capability('QUOTA')) {
     $OUTPUT->set_env('quota', true);
@@ -1775,28 +1776,34 @@ function rcmail_identity_select($MESSAGE, $identities = null, $compose_mode = 'r
         }
     }
 
-    $from_idx         = null;
-    $found_idx        = null;
-    $default_identity = 0; // default identity is always first on the list
+    // decode From: address
+    $from = rcube_mime::decode_address_list($MESSAGE->headers->from, null, true, $MESSAGE->headers->charset);
+    $from = array_shift($from);
+    $from['mailto'] = strtolower($from['mailto']);
+
+    $from_idx   = null;
+    $found_idx  = array('to' => null, 'from' => null);
+    $check_from = in_array($compose_mode, array('draft', 'edit', 'reply'));
 
     // Select identity
     foreach ($identities as $idx => $ident) {
-        // use From header
-        if (in_array($compose_mode, array('draft', 'edit'))) {
-            if ($MESSAGE->headers->from == $ident['ident']) {
+        // use From: header when in edit/draft or reply-to-self
+        if ($check_from && $from['mailto'] == strtolower($ident['email_ascii'])) {
+            // remember first matching identity address
+            if ($found_idx['from'] === null) {
+                $found_idx['from'] = $idx;
+            }
+            // match identity name
+            if ($from['name'] && $ident['name'] && $from['name'] == $ident['name']) {
                 $from_idx = $idx;
                 break;
             }
         }
-        // reply to yourself
-        else if ($compose_mode == 'reply' && $MESSAGE->headers->from == $ident['ident']) {
-            $from_idx = $idx;
-            break;
-        }
-        // use replied message recipients
+        // use replied/forwarded message recipients
         else if (($found = array_search(strtolower($ident['email_ascii']), $a_recipients)) !== false) {
-            if ($found_idx === null) {
-                $found_idx = $idx;
+            // remember first matching identity address
+            if ($found_idx['to'] === null) {
+                $found_idx['to'] = $idx;
             }
             // match identity name
             if ($a_names[$found] && $ident['name'] && $a_names[$found] == $ident['name']) {
@@ -1806,22 +1813,27 @@ function rcmail_identity_select($MESSAGE, $identities = null, $compose_mode = 'r
         }
     }
 
-    // If matching by name+address doesn't found any matches, get first found address (identity)
+    // If matching by name+address didn't find any matches,
+    // get first found identity (address) if any
     if ($from_idx === null) {
-        $from_idx = $found_idx;
+        $from_idx = $found_idx['from'] !== null ? $found_idx['from'] : $found_idx['to'];
     }
 
     // Try Return-Path
     if ($from_idx === null && ($return_path = $MESSAGE->headers->others['return-path'])) {
+        $return_path = array_map('strtolower', (array) $return_path);
+
         foreach ($identities as $idx => $ident) {
             // Return-Path header contains an email address, but on some mailing list
             // it can be e.g. <pear-dev-return-55250-local=domain.tld@lists.php.net>
             // where local@domain.tld is the address we're looking for (#1489241)
-            $ident1 = $ident['email_ascii'];
+            $ident1 = strtolower($ident['email_ascii']);
             $ident2 = str_replace('@', '=', $ident1);
+            $ident1 = '<' . $ident1 . '>';
+            $ident2 = '-' . $ident2 . '@';
 
-            foreach ((array)$return_path as $path) {
-                if (stripos($path, $ident1) !== false || stripos($path, $ident2)) {
+            foreach ($return_path as $path) {
+                if ($path == $ident1 || stripos($path, $ident2)) {
                     $from_idx = $idx;
                     break 2;
                 }
@@ -1835,7 +1847,8 @@ function rcmail_identity_select($MESSAGE, $identities = null, $compose_mode = 'r
 
     $selected = $plugin['selected'];
 
-    return $identities[$selected !== null ? $selected : $default_identity];
+    // default identity is always first on the list
+    return $identities[$selected !== null ? $selected : 0];
 }
 
 // Fixes some content-type names

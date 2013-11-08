@@ -15,8 +15,6 @@
 
  For translation see https://www.transifex.com/projects/p/roundcube-webmail/resource/plugin-managesieve/
 */
-
-
 $labels['filters'] = 'Filter';
 $labels['managefilters'] = 'Administrera filter';
 $labels['filtername'] = 'Filternamn';
@@ -49,6 +47,7 @@ $labels['messagesendcopy'] = 'Skicka kopia av meddelande till';
 $labels['messagereply'] = 'Besvara meddelande';
 $labels['messagedelete'] = 'Ta bort meddelande';
 $labels['messagediscard'] = 'Avböj med felmeddelande';
+$labels['messagekeep'] = 'Behåll meddelande i Inkorg';
 $labels['messagesrules'] = 'För inkommande meddelande';
 $labels['messagesactions'] = 'Utför följande åtgärd';
 $labels['add'] = 'Lägg till';
@@ -121,6 +120,22 @@ $labels['filtercreate'] = 'Skapa filter';
 $labels['usedata'] = 'Använd följande information i filtret:';
 $labels['nextstep'] = 'Nästa steg';
 $labels['...'] = '...';
+$labels['currdate'] = 'Dagens datum';
+$labels['datetest'] = 'Datum';
+$labels['dateheader'] = 'huvud:';
+$labels['year'] = 'år';
+$labels['month'] = 'månad';
+$labels['day'] = 'dag';
+$labels['date'] = 'datum (åååå-mm-dd)';
+$labels['julian'] = 'datum (Julianskt)';
+$labels['hour'] = 'timme';
+$labels['minute'] = 'minut';
+$labels['second'] = 'sekund';
+$labels['time'] = 'tid (hh:mm:ss)';
+$labels['iso8601'] = 'datum (ISO8601)';
+$labels['std11'] = 'datum (RFC2822)';
+$labels['zone'] = 'tidszon';
+$labels['weekday'] = 'veckodag (0-6)';
 $labels['advancedopts'] = 'Avancerade inställningar';
 $labels['body'] = 'Meddelandeinnehåll';
 $labels['address'] = 'adress';
@@ -140,8 +155,8 @@ $labels['default'] = 'standard';
 $labels['octet'] = 'strikt (oktalt)';
 $labels['asciicasemap'] = 'teckenlägesokänslig (ascii-casemap)';
 $labels['asciinumeric'] = 'numerisk (ascii-numeric)';
-
-$messages = array();
+$labels['index'] = 'index:';
+$labels['indexlast'] = 'omvänd';
 $messages['filterunknownerror'] = 'Okänt serverfel';
 $messages['filterconnerror'] = 'Anslutning till serverns filtertjänst misslyckades';
 $messages['filterdeleteerror'] = 'Filtret kunde inte tas bort på grund av serverfel';
@@ -173,5 +188,5 @@ $messages['nametoolong'] = 'Filtergruppen kan inte läggas till med för långt 
 $messages['namereserved'] = 'Reserverat namn.';
 $messages['setexist'] = 'Filtergrupp finns redan.';
 $messages['nodata'] = 'Minst en position måste väljas!';
-
+$messages['invaliddateformat'] = 'Ogiltigt datum eller del av datumformat';
 ?>

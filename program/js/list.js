@@ -31,6 +31,7 @@ function rcube_list_widget(list, p)
 
   this.list = list ? list : null;
   this.tagname = this.list ? this.list.nodeName.toLowerCase() : 'table';
+  this.id_regexp = /^rcmrow([a-z0-9\-_=\+\/]+)/i;
   this.thead;
   this.tbody;
   this.fixed_header;
@@ -50,13 +51,11 @@ function rcube_list_widget(list, p)
   this.keyboard = false;
   this.toggleselect = false;
 
-  this.dont_select = false;
   this.drag_active = false;
   this.col_drag_active = false;
   this.column_fixed = null;
   this.last_selected = 0;
   this.shift_start = 0;
-  this.in_selection_before = false;
   this.focused = false;
   this.drag_mouse_start = null;
   this.dblclick_time = 500; // default value on MS Windows is 500
@@ -112,7 +111,7 @@ init: function()
 init_row: function(row)
 {
   // make references in internal array and set event handlers
-  if (row && String(row.id).match(/^rcmrow([a-z0-9\-_=\+\/]+)/i)) {
+  if (row && String(row.id).match(this.id_regexp)) {
     var self = this,
       uid = RegExp.$1;
     row.uid = uid;
@@ -406,10 +405,7 @@ drag_column: function(e, col)
 drag_row: function(e, id)
 {
   // don't do anything (another action processed before)
-  var evtarget = rcube_event.get_target(e),
-    tagname = evtarget.tagName.toLowerCase();
-
-  if (this.dont_select || (evtarget && (tagname == 'input' || tagname == 'img')))
+  if (!this.is_event_target(e))
     return true;
 
   // accept right-clicks
@@ -421,12 +417,13 @@ drag_row: function(e, id)
   // selects currently unselected row
   if (!this.in_selection_before) {
     var mod_key = rcube_event.get_modifier(e);
-    this.select_row(id, mod_key, false);
+    this.select_row(id, mod_key, true);
   }
 
   if (this.draggable && this.selection.length && this.in_selection(id)) {
     this.drag_start = true;
     this.drag_mouse_start = rcube_event.get_mouse_pos(e);
+
     rcube_event.add_listener({event:'mousemove', object:this, method:'drag_mouse_move'});
     rcube_event.add_listener({event:'mouseup', object:this, method:'drag_mouse_up'});
     if (bw.touch) {
@@ -447,25 +444,16 @@ drag_row: function(e, id)
  */
 click_row: function(e, id)
 {
-  var now = new Date().getTime(),
-    mod_key = rcube_event.get_modifier(e),
-    evtarget = rcube_event.get_target(e),
-    tagname = evtarget.tagName.toLowerCase();
-
-  if ((evtarget && (tagname == 'input' || tagname == 'img')))
+  // don't do anything (another action processed before)
+  if (!this.is_event_target(e))
     return true;
 
-  // don't do anything (another action processed before)
-  if (this.dont_select) {
-    this.dont_select = false;
-    return false;
-  }
-
-  var dblclicked = now - this.rows[id].clicked < this.dblclick_time;
+  var now = new Date().getTime(),
+    dblclicked = now - this.rows[id].clicked < this.dblclick_time;
 
   // unselects currently selected row
-  if (!this.drag_active && this.in_selection_before == id && !dblclicked)
-    this.select_row(id, mod_key, false);
+  if (!this.drag_active && !dblclicked && this.in_selection_before == id)
+    this.select_row(id, rcube_event.get_modifier(e), true);
 
   this.drag_start = false;
   this.in_selection_before = false;
@@ -489,6 +477,18 @@ click_row: function(e, id)
 },
 
 
+/**
+ * Check target of the current event
+ */
+is_event_target: function(e)
+{
+  var target = rcube_event.get_target(e),
+    tagname = target.tagName.toLowerCase();
+
+  return !(target && (tagname == 'input' || tagname == 'img' || (tagname != 'a' && target.onclick)));
+},
+
+
 /*
  * Returns thread root ID for specified row ID
  */
@@ -509,8 +509,6 @@ expand_row: function(e, id)
     evtarget = rcube_event.get_target(e),
     mod_key = rcube_event.get_modifier(e);
 
-  // Don't select this message
-  this.dont_select = true;
   // Don't treat double click on the expando as double click on the message.
   row.clicked = 0;
 
@@ -735,7 +733,7 @@ get_first_row: function()
     var i, len, rows = this.tbody.childNodes;
 
     for (i=0, len=rows.length-1; i<len; i++)
-      if (rows[i].id && String(rows[i].id).match(/^rcmrow([a-z0-9\-_=\+\/]+)/i) && this.rows[RegExp.$1] != null)
+      if (rows[i].id && String(rows[i].id).match(this.id_regexp) && this.rows[RegExp.$1] != null)
         return RegExp.$1;
   }
 
@@ -748,7 +746,7 @@ get_last_row: function()
     var i, rows = this.tbody.childNodes;
 
     for (i=rows.length-1; i>=0; i--)
-      if (rows[i].id && String(rows[i].id).match(/^rcmrow([a-z0-9\-_=\+\/]+)/i) && this.rows[RegExp.$1] != null)
+      if (rows[i].id && String(rows[i].id).match(this.id_regexp) && this.rows[RegExp.$1] != null)
         return RegExp.$1;
   }
 
@@ -778,6 +776,7 @@ get_cell: function(row, index)
 select_row: function(id, mod_key, with_mouse)
 {
   var select_before = this.selection.join(',');
+
   if (!this.multiselect)
     mod_key = 0;
 
@@ -796,8 +795,10 @@ select_row: function(id, mod_key, with_mouse)
         break;
 
       case CONTROL_KEY:
-        if (!with_mouse)
+        if (with_mouse) {
+          this.shift_start = id;
           this.highlight_row(id, true);
+        }
         break;
 
       case CONTROL_SHIFT_KEY:
@@ -808,6 +809,7 @@ select_row: function(id, mod_key, with_mouse)
         this.highlight_row(id, false);
         break;
     }
+
     this.multi_selecting = true;
   }
 
@@ -865,14 +867,8 @@ select_first: function(mod_key)
 {
   var row = this.get_first_row();
   if (row) {
-    if (mod_key) {
-      this.shift_select(row, mod_key);
-      this.triggerEvent('select');
-      this.scrollto(row);
-    }
-    else {
-      this.select(row);
-    }
+    this.select_row(row, mod_key, false);
+    this.scrollto(row);
   }
 },
 
@@ -884,14 +880,8 @@ select_last: function(mod_key)
 {
   var row = this.get_last_row();
   if (row) {
-    if (mod_key) {
-      this.shift_select(row, mod_key);
-      this.triggerEvent('select');
-      this.scrollto(row);
-    }
-    else {
-      this.select(row);
-    }
+    this.select_row(row, mod_key, false);
+    this.scrollto(row);
   }
 },
 
@@ -905,7 +895,7 @@ select_children: function(uid)
 
   for (i=0; i<len; i++)
     if (!this.in_selection(children[i]))
-      this.select_row(children[i], CONTROL_KEY);
+      this.select_row(children[i], CONTROL_KEY, true);
 },
 
 
@@ -921,7 +911,8 @@ shift_select: function(id, control)
     from_rowIndex = this._rowIndex(this.rows[this.shift_start].obj),
     to_rowIndex = this._rowIndex(to_row.obj);
 
-  if (!to_row.expanded && to_row.has_children)
+  // if we're going down the list, and we hit a thread, and it's closed, select the whole thread
+  if (from_rowIndex < to_rowIndex && !to_row.expanded && to_row.has_children)
     if (to_row = this.rows[(this.row_children(id)).pop()])
       to_rowIndex = this._rowIndex(to_row.obj);
 
@@ -942,6 +933,7 @@ shift_select: function(id, control)
     }
   }
 },
+
 
 /**
  * Helper method to emulate the rowIndex property of non-tr elements
@@ -1143,10 +1135,15 @@ key_press: function(e)
       // Stop propagation so that the browser doesn't scroll
       rcube_event.cancel(e);
       return this.use_arrow_key(keyCode, mod_key);
-    case 61:
-    case 107: // Plus sign on a numeric keypad (fc11 + firefox 3.5.2)
-    case 109:
+
     case 32:
+      rcube_event.cancel(e);
+      return this.select_row(this.last_selected, mod_key, true);
+
+    case 37: // Left arrow key
+    case 39: // Right arrow key
+    case 107: // Plus sign on a numeric keypad
+    case 109: // Minus sign on a numeric keypad
       // Stop propagation
       rcube_event.cancel(e);
       var ret = this.use_plusminus_key(keyCode, mod_key);
@@ -1155,20 +1152,26 @@ key_press: function(e)
       this.triggerEvent('keypress');
       this.modkey = 0;
       return ret;
+
     case 36: // Home
       this.select_first(mod_key);
       return rcube_event.cancel(e);
+
     case 35: // End
       this.select_last(mod_key);
       return rcube_event.cancel(e);
+
     case 27:
       if (this.drag_active)
         return this.drag_mouse_up(e);
+
       if (this.col_drag_active) {
         this.selected_column = null;
         return this.column_drag_mouse_up(e);
       }
+
       return rcube_event.cancel(e);
+
     default:
       this.key_pressed = keyCode;
       this.modkey = mod_key;
@@ -1211,21 +1214,30 @@ use_arrow_key: function(keyCode, mod_key)
 use_plusminus_key: function(keyCode, mod_key)
 {
   var selected_row = this.rows[this.last_selected];
-  if (!selected_row)
+
+  if (!selected_row || !selected_row.has_children)
     return;
 
-  if (keyCode == 32)
-    keyCode = selected_row.expanded ? 109 : 61;
-  if (keyCode == 61 || keyCode == 107)
+  // expand
+  if (keyCode == 39 || keyCode == 107) {
+    if (selected_row.expanded)
+      return;
+
     if (mod_key == CONTROL_KEY || this.multiexpand)
       this.expand_all(selected_row);
     else
-     this.expand(selected_row);
-  else
+      this.expand(selected_row);
+  }
+  // collapse
+  else {
+    if (!selected_row.expanded)
+      return;
+
     if (mod_key == CONTROL_KEY || this.multiexpand)
       this.collapse_all(selected_row);
     else
       this.collapse(selected_row);
+  }
 
   this.update_expando(selected_row.uid, selected_row.expanded);
 
@@ -1240,7 +1252,8 @@ scrollto: function(id)
 {
   var row = this.rows[id].obj;
   if (row && this.frame) {
-    var scroll_to = Number(row.offsetTop);
+    var scroll_to = Number(row.offsetTop),
+      head_offset = 0;
 
     // expand thread if target row is hidden (collapsed)
     if (!scroll_to && this.rows[id].parent_uid) {
@@ -1249,8 +1262,14 @@ scrollto: function(id)
       scroll_to = Number(row.offsetTop);
     }
 
-    if (scroll_to < Number(this.frame.scrollTop))
-      this.frame.scrollTop = scroll_to;
+    if (this.fixed_header)
+      head_offset = Number(this.thead.offsetHeight);
+
+    // if row is above the frame (or behind header)
+    if (scroll_to < Number(this.frame.scrollTop) + head_offset) {
+      // scroll window so that row isn't behind header
+      this.frame.scrollTop = scroll_to - head_offset;
+    }
     else if (scroll_to + Number(row.offsetHeight) > Number(this.frame.scrollTop) + Number(this.frame.offsetHeight))
       this.frame.scrollTop = (scroll_to + Number(row.offsetHeight)) - Number(this.frame.offsetHeight);
   }

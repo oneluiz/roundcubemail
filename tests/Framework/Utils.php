@@ -171,6 +171,12 @@ class Framework_Utils extends PHPUnit_Framework_TestCase
         $this->assertRegExp('/#rcmbody h1\s\{/', $mod, "Prefix tag styles (single)");
         $this->assertRegExp('/#rcmbody h1, #rcmbody h2, #rcmbody h3, #rcmbody textarea\s+\{/', $mod, "Prefix tag styles (multiple)");
         $this->assertRegExp('/#rcmbody \.noscript\s+\{/', $mod, "Prefix class styles");
+
+        $css = file_get_contents(TESTS_DIR . 'src/media.css');
+        $mod = rcube_utils::mod_css_styles($css, 'rcmbody');
+
+        $this->assertContains('#rcmbody table[class=w600]', $mod, 'Replace styles nested in @media block');
+        $this->assertContains('#rcmbody {width:600px', $mod, 'Replace body selector nested in @media block');
     }
 
     /**
@@ -284,6 +290,32 @@ class Framework_Utils extends PHPUnit_Framework_TestCase
         foreach ($test as $datetime => $ts) {
             $result = rcube_utils::strtotime($datetime);
             $this->assertSame($ts, $result, "Error parsing date: $datetime");
+        }
+    }
+
+    /**
+     * rcube:utils::anytodatetime()
+     */
+    function test_anytodatetime()
+    {
+        $test = array(
+            '2013-04-22' => '2013-04-22',
+            '2013/04/22' => '2013-04-22',
+            '2013.04.22' => '2013-04-22',
+            '22-04-2013' => '2013-04-22',
+            '22/04/2013' => '2013-04-22',
+            '22.04.2013' => '2013-04-22',
+            '04/22/2013' => '2013-04-22',
+            '22.4.2013'  => '2013-04-22',
+            '20130422'   => '2013-04-22',
+            '1900-10-10' => '1900-10-10',
+            '01-01-1900' => '1900-01-01',
+            '01/30/1960' => '1960-01-30'
+        );
+
+        foreach ($test as $datetime => $ts) {
+            $result = rcube_utils::anytodatetime($datetime);
+            $this->assertSame($ts, $result ? $result->format('Y-m-d') : '', "Error parsing date: $datetime");
         }
     }
 

@@ -15,8 +15,6 @@
 
  For translation see https://www.transifex.com/projects/p/roundcube-webmail/resource/messages/
 */
-
-$messages = array();
 $messages['errortitle']  = 'Bir hata oluştu!';
 $messages['loginfailed']  = 'Giriş Başarısız';
 $messages['cookiesdisabled'] = 'Tarayıcınız çerezleri kabul etmiyor';
@@ -46,6 +44,8 @@ $messages['messagesent'] = 'Posta gönderildi';
 $messages['savingmessage'] = 'Posta kaydediliyor...';
 $messages['messagesaved'] = 'Posta taslaklara kaydedildi';
 $messages['successfullysaved'] = 'Kaydedildi';
+$messages['savingresponse'] = 'Yanıt metni kaydediliyor...';
+$messages['deleteresponseconfirm'] = 'Yanıt metnini gerçekten silmek istiyor musunuz?';
 $messages['addedsuccessfully'] = 'Kişi adres defterine eklendi';
 $messages['contactexists'] = 'Rehberde bu e-posta adresine sahip biri zaten var';
 $messages['contactnameexists'] = 'Rehberde bu ada sahip biri zaten var.';
@@ -56,8 +56,8 @@ $messages['contactnotfound'] = 'İstenen kişi bulunamadı';
 $messages['contactsearchonly'] = 'Kişi aramak için arama terimleri giriniz';
 $messages['sendingfailed'] = 'Posta gönderilemedi';
 $messages['senttooquickly'] = 'Lütfen bu postayı göndermeden önce $sec saniye bekleyin';
-$messages['errorsavingsent'] = 'Gönderilen postayı kaydederken hata oluştu';
-$messages['errorsaving'] = 'Kaydederken bir hata oluştu';
+$messages['errorsavingsent'] = 'Gönderilen postayı kaydederken hata oluştu.';
+$messages['errorsaving'] = 'Kaydederken bir hata oluştu.';
 $messages['errormoving'] = 'Posta taşınamadı';
 $messages['errorcopying'] = 'Posta kopyalanamadı';
 $messages['errordeleting'] = 'Posta silinemedi';
@@ -101,13 +101,16 @@ $messages['converting'] = 'Postanın biçimlendirmesi kaldırılıyor...';
 $messages['messageopenerror'] = 'Sunucudan posta yüklenemedi';
 $messages['fileuploaderror'] = 'Dosya yükleme başarısız';
 $messages['filesizeerror'] = 'Yüklenen dosya en büyük dosya boyunu ($size) aşıyor';
-$messages['copysuccess'] = '$nr adres kopyalandı';
-$messages['copyerror'] = 'Hiçbir adres kopyalanamadı';
+$messages['copysuccess'] = '$nr adet kişi başarıyla kopyalandı.';
+$messages['movesuccess'] = '$nr adet kişi başarıyla taşındı.';
+$messages['copyerror'] = 'Kişiler kopyalanamadı.';
+$messages['moveerror'] = 'Kişiler taşınamadı.';
 $messages['sourceisreadonly'] = 'Adres kaynağı salt okunur durumda';
 $messages['errorsavingcontact'] = 'Kişinin adresi kaydedilemedi';
 $messages['movingmessage'] = 'Posta(lar) taşınıyor...';
 $messages['copyingmessage'] = 'Posta(lar) kopyalanıyor...';
 $messages['copyingcontact'] = 'Kişile(ler) kopyalanıyor...';
+$messages['movingcontact'] = 'Kişi(ler) taşınıyor...';
 $messages['deletingmessage'] = 'Posta(lar) siliniyor...';
 $messages['markingmessage'] = 'Posta(lar) işaretleniyor...';
 $messages['addingmember'] = 'Gruba kişi(ler) ekleniyor...';
@@ -141,7 +144,7 @@ $messages['smtperror'] = 'SMTP Hatası: $msg';
 $messages['emailformaterror'] = 'Hatalı e-posta adresi: $email';
 $messages['toomanyrecipients'] = 'Çok fazla alıcı. En fazla $max alıcı girebilirsiniz.';
 $messages['maxgroupmembersreached'] = 'Grup üyelerinin sayısı $max sınırını aşıyor.';
-$messages['internalerror'] = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+$messages['internalerror'] = 'Dahili bir hata oluştu. Lütfen tekrar deneyin.';
 $messages['contactdelerror'] = 'Kişi(ler) silinemedi';
 $messages['contactdeleted'] = 'Kişi(ler) silindi';
 $messages['contactrestoreerror'] = 'Silinen kişi(ler) geri getirilemiyor.';
@@ -169,5 +172,4 @@ $messages['parentnotwritable'] = 'Klasör, seçilen üst klasöre taşınamıyor
 $messages['messagetoobig'] = 'Bu ileti parçası işlenemeyecek kadar büyük.';
 $messages['attachmentvalidationerror'] = 'UYARI! Bu eklenti mesajda belirtilenden farklı olduğu için şüpheli bulundu. Eğer göndericiye güvenmiyorsanız eki web tarayıcısında açmayın. Şüpheli içerik bulunabilir.';
 $messages['noscriptwarning'] = 'Uyarı: Bu e-posta servisi Javascript gerektirmektedir! Servisi kullanabilmek için lütfen web tarayıcınızın ayarlarından Javascript\'i etkinleştiriniz.';
-
 ?>

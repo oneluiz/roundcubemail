@@ -518,7 +518,7 @@ table.messagelist.fixedcopy {
 }
 
 .messagelist tr td.date {
-	width: 135px;
+	width: 155px;
 }
 
 .messagelist tr.message {
@@ -621,6 +621,10 @@ table.messagelist.fixedcopy {
 	background-position: -24px -1116px;
 }
 
+.messagelist thead tr td.priority span.priority {
+	background-position: -24px -1845px;
+}
+
 .messagelist tr td.priority span.prio5 {
 	background-position: 0 -1905px;
 }
@@ -642,7 +646,7 @@ table.messagelist.fixedcopy {
 }
 
 .messagelist thead tr td.flag span.flagged {
-	background-position: -24px -1036px;
+	background-position: -22px -1036px;
 }
 
 .messagelist tr td.status span.msgicon:hover {
@@ -696,7 +700,7 @@ table.messagelist.fixedcopy {
 }
 
 .messagelist thead tr td.status span.status {
-	background-position: -24px -1016px;
+	background-position: -23px -1017px;
 }
 
 .messagelist tr td div.collapsed {
@@ -768,6 +772,7 @@ table.messagelist.fixedcopy {
 	width: 100%;
 	bottom: 27px;
 	overflow: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
 #messageheader,

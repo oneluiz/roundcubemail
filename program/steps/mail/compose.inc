@@ -109,7 +109,8 @@ if (!is_array($COMPOSE))
 $OUTPUT->add_label('nosubject', 'nosenderwarning', 'norecipientwarning', 'nosubjectwarning', 'cancel',
     'nobodywarning', 'notsentwarning', 'notuploadedwarning', 'savingmessage', 'sendingmessage', 
     'messagesaved', 'converting', 'editorwarning', 'searching', 'uploading', 'uploadingmany',
-    'fileuploaderror', 'sendmessage');
+    'fileuploaderror', 'sendmessage', 'savenewresponse', 'responsename', 'responsetext', 'save',
+    'savingresponse');
 
 $OUTPUT->set_env('compose_id', $COMPOSE['id']);
 $OUTPUT->set_pagetitle(rcube_label('compose'));
@@ -852,29 +853,14 @@ function rcmail_compose_body($attrib)
 
   // Set language list
   if (!empty($CONFIG['enable_spellcheck'])) {
-    $engine           = $RCMAIL->config->get('spellcheck_engine','googie');
+    $engine           = new rcube_spellchecker();
     $dictionary       = (bool) $RCMAIL->config->get('spellcheck_dictionary');
-    $spellcheck_langs = (array) $RCMAIL->config->get('spellcheck_languages',
-      array('da'=>'Dansk', 'de'=>'Deutsch', 'en' => 'English', 'es'=>'Español',
-            'fr'=>'Français', 'it'=>'Italiano', 'nl'=>'Nederlands', 'pl'=>'Polski',
-            'pt'=>'Português', 'ru'=>'Русский', 'fi'=>'Suomi', 'sv'=>'Svenska'));
+    $spellcheck_langs = $engine->languages();
+    $lang = $_SESSION['language'];
 
-    // googie works only with two-letter codes
-    if ($engine == 'googie') {
-      $lang = strtolower(substr($_SESSION['language'], 0, 2));
-
-      $spellcheck_langs_googie = array();
-      foreach ($spellcheck_langs as $key => $name)
-        $spellcheck_langs_googie[strtolower(substr($key,0,2))] = $name;
-        $spellcheck_langs = $spellcheck_langs_googie;
-    }
-    else {
-      $lang = $_SESSION['language'];
-
-      // if not found in the list, try with two-letter code
-      if (!$spellcheck_langs[$lang])
-        $lang = strtolower(substr($lang, 0, 2));
-    }
+    // if not found in the list, try with two-letter code
+    if (!$spellcheck_langs[$lang])
+      $lang = strtolower(substr($lang, 0, 2));
 
     if (!$spellcheck_langs[$lang])
       $lang = 'en';
@@ -1757,6 +1743,38 @@ function compose_file_drop_area($attrib)
 }
 
 
+/**
+ *
+ */
+function rcmail_compose_responses_list($attrib)
+{
+    global $RCMAIL, $OUTPUT;
+
+    $attrib += array('id' => 'rcmresponseslist', 'tagname' => 'ul', 'cols' => 1);
+
+    $jsenv = array();
+    $list = new html_table($attrib);
+    foreach ($RCMAIL->get_compose_responses(true) as $response) {
+        $key = $response['key'];
+        $item = html::a(array(
+            'href '=> '#'.urlencode($response['name']),
+            'class' => rtrim('insertresponse ' . $attrib['itemclass']),
+            'unselectable' => 'on',
+            'rel' => $key,
+        ), Q($response['name']));
+
+        $jsenv[$key] = $response;
+        $list->add(array(), $item);
+    }
+
+    // set client env
+    $OUTPUT->set_env('textresponses', $jsenv);
+    $OUTPUT->add_gui_object('responseslist', $attrib['id']);
+
+    return $list->show();
+}
+
+
 // register UI objects
 $OUTPUT->add_handlers(array(
   'composeheaders' => 'rcmail_compose_headers',
@@ -1773,6 +1791,7 @@ $OUTPUT->add_handlers(array(
   'storetarget' => 'rcmail_store_target_selection',
   'addressbooks' => 'rcmail_addressbook_list',
   'addresslist' => 'rcmail_contacts_list',
+  'responseslist' => 'rcmail_compose_responses_list',
 ));
 
 $OUTPUT->send('compose');

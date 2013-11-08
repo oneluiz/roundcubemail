@@ -15,8 +15,6 @@
 
  For translation see https://www.transifex.com/projects/p/roundcube-webmail/resource/messages/
 */
-
-$messages = array();
 $messages['errortitle']  = 'Ett fel uppstod!';
 $messages['loginfailed']  = 'Inloggningen misslyckades';
 $messages['cookiesdisabled'] = 'Din webbläsare accepterar inte cookies';
@@ -46,6 +44,8 @@ $messages['messagesent'] = 'Meddelandet har skickats.';
 $messages['savingmessage'] = 'Sparar meddelande...';
 $messages['messagesaved'] = 'Meddelandet har sparats i Utkast';
 $messages['successfullysaved'] = 'Informationen har sparats.';
+$messages['savingresponse'] = 'Sparar responstext...';
+$messages['deleteresponseconfirm'] = 'Vill du verkligen ta bort denna responstext?';
 $messages['addedsuccessfully'] = 'Kontakten har lagts till i adressboken.';
 $messages['contactexists'] = 'En kontakt med den här adressen finns redan';
 $messages['contactnameexists'] = 'En kontakt med det här namnet finns redan';
@@ -172,5 +172,4 @@ $messages['parentnotwritable'] = 'Katalogen kunde inte skapas eller flyttas. Åt
 $messages['messagetoobig'] = 'Denna del av meddelandet är alltför stor för att hantera.';
 $messages['attachmentvalidationerror'] = 'VARNING! Bilagan misstänks vara av annan typ än vad som anges i meddelandet. Om du inte litar på avsändaren ska du inte öppna bilagan.<br/><br/><em>Angiven typ: $expected; funnen typ: $detected</em>';
 $messages['noscriptwarning'] = 'Varning: Denna webbmailtjänst fungerar inte utan Javascript! Aktivera Javascript i webbläsarens inställningar.';
-
 ?>

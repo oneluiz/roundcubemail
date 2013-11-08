@@ -15,8 +15,6 @@
 
  For translation see https://www.transifex.com/projects/p/roundcube-webmail/resource/messages/
 */
-
-$messages = array();
 $messages['errortitle']  = 'Prišlo je do napake!';
 $messages['loginfailed']  = 'Prijava ni uspela';
 $messages['cookiesdisabled'] = 'Vaš spletni brskalnik ne sprejema piškotkov.';
@@ -46,6 +44,8 @@ $messages['messagesent'] = 'Sporočilo je bilo uspešno poslano.';
 $messages['savingmessage'] = 'Shranjevanje sporočila...';
 $messages['messagesaved'] = 'Sporočilo je bilo shranjeno v Osnutke';
 $messages['successfullysaved'] = 'Uspešno shranjeno.';
+$messages['savingresponse'] = 'Shranjevanje odgovora...';
+$messages['deleteresponseconfirm'] = 'Ste prepričani, da želite izbrisati ta odgovor?';
 $messages['addedsuccessfully'] = 'Stik je bil uspešno dodan v imenik.';
 $messages['contactexists'] = 'Stik s tem elektronskim naslovom že obstaja.';
 $messages['contactnameexists'] = 'Stik s tem imenom že obstaja';
@@ -101,13 +101,16 @@ $messages['converting'] = 'Odstranjevanje nastavitev oblikovanja...';
 $messages['messageopenerror'] = 'Sporočila ni bilo mogoče prenesti iz strežnika';
 $messages['fileuploaderror'] = 'Prenos datoteke je spodletel';
 $messages['filesizeerror'] = 'Naložena datoteka presega največjo dovoljeno velikost $size';
-$messages['copysuccess'] = '$nr naslovov je bilo uspešno prenešenih';
-$messages['copyerror'] = 'Nobenih naslovov ni bilo mogoče kopirati';
+$messages['copysuccess'] = 'Uspešno ste kopirali $nr stikov.';
+$messages['movesuccess'] = 'Uspešno ste premaknili $nr stikov.';
+$messages['copyerror'] = 'Stikov ni bilo mogoče kopirati.';
+$messages['moveerror'] = 'Stikov ni bilo mogoče premakniti.';
 $messages['sourceisreadonly'] = 'Ta naslov je na voljo samo za branje';
 $messages['errorsavingcontact'] = 'Stika ni bilo mogoče shraniti';
 $messages['movingmessage'] = 'Premikanje sporočila...';
 $messages['copyingmessage'] = 'Kopiranje sporočila...';
 $messages['copyingcontact'] = 'Kopiranje stika/ov';
+$messages['movingcontact'] = 'Premikanje stika(ov)...';
 $messages['deletingmessage'] = 'Brisanje sporočil/a';
 $messages['markingmessage'] = 'Označevanje sporočil/a';
 $messages['addingmember'] = 'Dodajanje stika/ov v skupino...';
@@ -169,5 +172,4 @@ $messages['parentnotwritable'] = 'Podmape v tej mapi ni bilo mogoče ustvariti/p
 $messages['messagetoobig'] = 'Sporočilo je preveliko za obdelavo.';
 $messages['attachmentvalidationerror'] = 'OPOZORILO! Priponka vsebuje sumljivo vsebino, saj tip priponke ne ustreza tipu, določenemu v sporočilu. Če ne zaupate pošiljatelju, priponke v brskalniku ne odpirajte, saj lahko vsebuje zlonamerno vsebino. <br/><br/><em>Pričakovano: $expected; Najdeno: $detected</em>';
 $messages['noscriptwarning'] = 'Opozorilo: Ta spletna stran zahteva Javascript! Za uporabo jo vključite v nastavitvah vašega brskalnika.';
-
 ?>

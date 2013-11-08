@@ -869,6 +869,24 @@ function rcmail_user_prefs($current = null)
                         $select_default_font_size->show($RCMAIL->config->get('default_font_size', 1))
                 );
             }
+
+            if (!isset($no_override['reply_all_mode'])) {
+                if (!$current) {
+                    continue 2;
+                }
+
+                $field_id = 'rcmfd_reply_all_mode';
+                $select   = new html_select(array('name' => '_reply_all_mode', 'id' => $field_id));
+
+                $select->add(rcube_label('replyalldefault'), 0);
+                $select->add(rcube_label('replyalllist'), 1);
+
+                $blocks['main']['options']['reply_all_mode'] = array(
+                    'title'   => html::label($field_id, Q(rcube_label('replyallmode'))),
+                    'content' => $select->show(intval($config['reply_all_mode'])),
+                );
+            }
+
         break;
 
         // Addressbook config
@@ -1162,11 +1180,21 @@ function rcmail_user_prefs($current = null)
         $data  = $RCMAIL->plugins->exec_hook('preferences_list',
             array('section' => $sect['id'], 'blocks' => $blocks, 'current' => $current));
 
+        $advanced_prefs = $config['advanced_prefs'];
+
         // create output
-        foreach ($data['blocks'] as $block) {
+        foreach ($data['blocks'] as $key => $block) {
             if (!empty($block['content']) || !empty($block['options'])) {
                 $found = true;
-                break;
+            }
+            // move some options to the 'advanced' block as configured by admin
+            if ($key != 'advanced') {
+                foreach ($advanced_prefs as $opt) {
+                    if ($block['options'][$opt]) {
+                        $data['blocks']['advanced']['options'][$opt] = $block['options'][$opt];
+                        unset($data['blocks'][$key]['options'][$opt]);
+                    }
+                }
             }
         }
 
@@ -1260,6 +1288,7 @@ function rcmail_settings_tabs($attrib)
         array('command' => 'preferences', 'type' => 'link', 'label' => 'preferences', 'title' => 'editpreferences'),
         array('command' => 'folders',     'type' => 'link', 'label' => 'folders',     'title' => 'managefolders'),
         array('command' => 'identities',  'type' => 'link', 'label' => 'identities',  'title' => 'manageidentities'),
+        array('command' => 'responses',   'type' => 'link', 'label' => 'responses',  'title' => 'editresponses'),
     );
 
     // get all identites from DB and define list of cols to be displayed
@@ -1321,4 +1350,7 @@ $RCMAIL->register_action_map(array(
     'purge'         => 'folders.inc',
     'folder-size'   => 'folders.inc',
     'add-identity'  => 'edit_identity.inc',
+    'add-response'  => 'edit_response.inc',
+    'save-response' => 'edit_response.inc',
+    'delete-response' => 'responses.inc',
 ));

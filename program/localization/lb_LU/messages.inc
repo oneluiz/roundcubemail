@@ -15,8 +15,6 @@
 
  For translation see https://www.transifex.com/projects/p/roundcube-webmail/resource/messages/
 */
-
-$messages = array();
 $messages['errortitle']  = 'Ee Feeler ass opgetrueden!';
 $messages['loginfailed']  = 'Login feelgeschloen.';
 $messages['cookiesdisabled'] = 'Däi Browser acceptéiert keng Cookien.';
@@ -46,6 +44,8 @@ $messages['messagesent'] = 'Message erfollegräich verschéckt.';
 $messages['savingmessage'] = 'Message gëtt gespäichert...';
 $messages['messagesaved'] = 'Message als Brouillon gespäichert.';
 $messages['successfullysaved'] = 'Erfollegräich gespäichert.';
+$messages['savingresponse'] = 'Äntwert-Text gëtt gespäichert...';
+$messages['deleteresponseconfirm'] = 'Wëlls du dësen Äntwert-Text wierklech läschen?';
 $messages['addedsuccessfully'] = 'Kontakt erfollegräich an d\'Adressbuch gesat.';
 $messages['contactexists'] = 'Et existéiert schon e Kontakt mat der selweschter E-Mail-Adress.';
 $messages['contactnameexists'] = 'Et existéiert schon e Kontakt mam selweschten Numm.';
@@ -56,7 +56,7 @@ $messages['contactnotfound'] = 'Den ugefrotene Kontakt gouf net fonnt.';
 $messages['contactsearchonly'] = 'Gëff e puer Sichbegrëffer a fir Kontakter ze fannen';
 $messages['sendingfailed'] = 'De Message konnt net verschéckt ginn.';
 $messages['senttooquickly'] = 'Waart wann ech gelift $sec Sekonn(en) bevir s du de Message verschécks. ';
-$messages['errorsavingsent'] = 'Beim Späichere vum verschéckte Message ass e Feeler opgetrueden';
+$messages['errorsavingsent'] = 'Beim Späichere vum geschéckte Message ass e Feeler opgetruden.';
 $messages['errorsaving'] = 'Beim Späicheren ass e Feeler opgetrueden.';
 $messages['errormoving'] = 'D\'Messagë konnten net verréckelt ginn.';
 $messages['errorcopying'] = 'D\'Messagë konnten net kopéiert ginn.';
@@ -172,5 +172,4 @@ $messages['parentnotwritable'] = 'Den Dossier konnt net am ausgewielten Dossier 
 $messages['messagetoobig'] = 'Den Messagen-Deel ass ze grouss fir verschafft ze ginn.';
 $messages['attachmentvalidationerror'] = 'WARNUNG! Dësen Unhank ass verdächteg well den tatsächlechen Typ vum Fichier net mam Typ deen am Message deklaréiert ass iwwertenee stëmmt. Falls du dem Ofsender net traus sollts du den Unhank net am Browser opmaache well e béisaartegen Inhalt enthaale kéint.<br/><br/><em>Erwaart: $expected; fonnt: $detected</em>';
 $messages['noscriptwarning'] = 'Warnung: Dëse Webmail brauch JavaScript! Fir de Service benotzen ze kënnen, aktivéier w.e.gl JavaScript an denge Browser-Astellungen.';
-
 ?>

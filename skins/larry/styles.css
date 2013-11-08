@@ -1241,7 +1241,6 @@ table.records-table {
 	display: table;
 	width: 100%;
 	table-layout: fixed;
-	border-collapse: collapse;
 	border-spacing: 0;
 	border: 1px solid #bbd3da;
 }
@@ -1438,6 +1437,20 @@ body.iframe .footerleft.floating:before,
 .propform fieldset fieldset legend {
 	color: #666;
 	font-size: 12px;
+}
+
+.propform div.prop {
+	margin-bottom: 0.5em;
+}
+
+.propform div.prop.block label {
+	display: block;
+	margin-bottom: 0.3em;
+}
+
+.propform div.prop.block input,
+.propform div.prop.block textarea {
+	width: 95%;
 }
 
 fieldset.floating {
@@ -1817,7 +1830,11 @@ ul.proplist li {
 }
 
 .toolbar a.button.download {
-	background-position: center -1906px;
+	background-position: center -1892px;
+}
+
+.toolbar a.button.responses {
+	background-position: center -1932px;
 }
 
 a.menuselector {
@@ -1906,6 +1923,9 @@ select.decorated option {
 	top: 32px;
 	left: 90px;
 	width: auto;
+	max-height: 70%;
+	overflow: -moz-scrollbars-vertical;
+	overflow-y: auto;
 	background: #444;
 	border: 1px solid #999;
 	z-index: 240;
@@ -1922,6 +1942,7 @@ select.decorated option {
 }
 
 ul.toolbarmenu,
+ul.toolbarmenu ul,
 #rcmKSearchpane ul {
 	margin: 0;
 	padding: 0;
@@ -1940,13 +1961,13 @@ ul.toolbarmenu li,
 }
 
 .googie_list tr:first-child td,
-ul.toolbarmenu li:first-child,
+ul.toolbarmenu > li:first-child,
 select.decorated option:first-child {
 	border-top: 0;
 }
 
 .googie_list tr:last-child td,
-ul.toolbarmenu li:last-child,
+ul.toolbarmenu > li:last-child,
 select.decorated option:last-child {
 	border-bottom: 0;
 }
@@ -1998,6 +2019,11 @@ ul.toolbarmenu li label {
 	color: #fff;
 	padding: 4px 8px;
 	text-shadow: 0px 1px 1px #333;
+}
+
+ul.toolbarmenu li.separator label {
+	color: #bbb;
+	font-style: italic;
 }
 
 ul.toolbarmenu li a.icon {
@@ -2076,6 +2102,15 @@ ul.toolbarmenu li span.extwin {
 
 ul.toolbarmenu li span.conversation {
 	background-position: 0 -1532px;
+}
+
+#snippetslist {
+	max-width: 200px;
+}
+
+#snippetslist li a {
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 #rcmKSearchpane {
@@ -2285,6 +2320,18 @@ ul.toolbarmenu li span.conversation {
 .attachmentslist li.eml,
 .attachmentslist li.rfc822 {
 	background-position: 0 -494px;
+}
+
+.attachmentslist li.ppt,
+.attachmentslist li.pptx,
+.attachmentslist li.ppsx,
+.attachmentslist li.vnd.mspowerpoint {
+	background-position: 0 -520px;
+}
+
+.attachmentslist li.odp,
+.attachmentslist li.otp {
+	background-position: 0 -546px;
 }
 
 .attachmentslist li a,

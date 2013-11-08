@@ -15,8 +15,6 @@
 
  For translation see https://www.transifex.com/projects/p/roundcube-webmail/resource/messages/
 */
-
-$messages = array();
 $messages['errortitle']  = 'Ocorreu um erro!';
 $messages['loginfailed']  = 'Falha no login';
 $messages['cookiesdisabled'] = 'Seu navegador não aceita cookies';
@@ -46,6 +44,8 @@ $messages['messagesent'] = 'Mensagem enviada com sucesso';
 $messages['savingmessage'] = 'Salvando Mensagem...';
 $messages['messagesaved'] = 'Mensagem salva em Rascunhos';
 $messages['successfullysaved'] = 'Salvo com sucesso';
+$messages['savingresponse'] = 'Salvando texto de resposta...';
+$messages['deleteresponseconfirm'] = 'Você realmente deseja apagar este texto de resposta?';
 $messages['addedsuccessfully'] = 'Contato incluído com sucesso no catálogo de endereços.';
 $messages['contactexists'] = 'Já existe um contato com esse mesmo e-mail.';
 $messages['contactnameexists'] = 'Já existe um contato com o mesmo nome.';
@@ -172,5 +172,4 @@ $messages['parentnotwritable'] = 'Sem permissão para criar/mover a pasta dentro
 $messages['messagetoobig'] = 'A mensagem é muito grande para ser processada.';
 $messages['attachmentvalidationerror'] = 'ATENÇÃO! Este anexo é suspeito porque seu tipo não combina com o tipo declarado na mensagem. Se você não confia no remetente, não deveria abri-lo no navegador porque pode conter conteúdo malicioso.<br/><br/><em>Esperado: $expected; encontrado: $detected</em>';
 $messages['noscriptwarning'] = 'Aviso: Este webmail utiliza Javascript, habilite-o nas configurações de seu navegador.';
-
 ?>
